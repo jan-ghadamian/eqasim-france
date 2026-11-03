@@ -2,17 +2,19 @@
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: /path/to/my/cache
+working_directory: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\cache
 
 # This section defines which parts of the pipeline should be run
 run:
-  - synthesis.output # To create the output population in the output_path (see below)
+  # - synthesis.output # To create the output population in the output_path (see below)
   # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  - matsim.simulation.full_run
+  # - matsim.scenario.supply.osm
 
 # Here the configuraiton of the pipeline starts
 config:
   # Some general configuration
-  processes: 4
+  processes: 8
 
   # Define whether to use ENTD or EGT as the household travel survey (HTS)
   hts: entd
@@ -22,8 +24,8 @@ config:
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: /path/to/my/data
-  output_path: /path/to/my/output
+  data_path: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\data
+  output_path: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\output
   output_prefix: corsica_
 
   # Only interesting if you run the simulation
@@ -39,6 +41,12 @@ config:
   ban_path: ban_corsica
   bdtopo_path: bdtopo_corsica
   matching_minimum_observations: 5
+
+  # eqasim_local_source: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\eqasim-java
+
+  # projection_year: custom        # any non-None value to activate the IPU path in sampled.py
+  # custom_projection_path: C:/Users/ghjan/OneDrive - ETH Zurich/Documents/FUTURES/Eqasim_project/population/custom_projection_target.csv
+  # custom_road_network_path: C:/Users/ghjan/OneDrive - ETH Zurich/Documents/FUTURES/Eqasim_project/network/custom_road_network.xml.gz
 
   # Uncomment to generate a scenario for eqasim-java unit testing
   # write_jar: false

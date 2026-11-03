@@ -65,7 +65,7 @@ report.register(
 
 report.register(
     "Origin-destination data (RP-MOBPRO 2022)",
-    "https://www.insee.fr/fr/statistiques/fichier/8589904/RP2019_mobpro.parquet"
+    "https://www.insee.fr/fr/statistiques/fichier/8589904/RP2022_mobpro.parquet"
 )
 
 report.register(
@@ -85,7 +85,7 @@ report.register(
 
 report.register(
     "Service and facility census (BPE 2024)",
-    "https://www.insee.fr/fr/statistiques/fichier/8217525/BPE24.zip"
+    "https://www.insee.fr/fr/statistiques/fichier/8217525/BPE24.parquet"
 )
 
 entd_sources = [

@@ -12,6 +12,7 @@ def configure(context):
     context.config("pt2matsim_version", "26.1")
     context.config("pt2matsim_branch", "v26.1")
 
+
 def run(context, command, arguments, vm_arguments=[]):
     # Make sure there is a dependency
     jar_path = context.stage("matsim.runtime.pt2matsim")

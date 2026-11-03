@@ -8,6 +8,7 @@ def configure(context):
 
     context.stage("matsim.scenario.supply.osm")
     context.stage("matsim.scenario.supply.gtfs")
+    # context.stage("matsim.scenario.supply.custom_osm")
 
     context.config("data_path")
     context.config("processes", volatile = True)
@@ -18,6 +19,10 @@ def execute(context):
         context.path("matsim.scenario.supply.osm"),
         context.stage("matsim.scenario.supply.osm")
     )
+    # network_path = "%s/%s" % (
+    #     context.path("matsim.scenario.supply.custom_osm"),
+    #     context.stage("matsim.scenario.supply.custom_osm")
+    # )
 
     schedule_path = "%s/%s" % (
         context.path("matsim.scenario.supply.gtfs"),

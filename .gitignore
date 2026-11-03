@@ -14,4 +14,3 @@ config_local_*.yml
 docs/_build
 
 .sif
-

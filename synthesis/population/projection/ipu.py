@@ -7,11 +7,17 @@ This stage reweights the census data set according to the projection data for a 
 
 def configure(context):
     context.stage("data.census.cleaned")
-    context.stage("data.census.projection")
+    # context.stage("data.census.projection")
+    context.stage("data.census.custom_projection")
 
 def execute(context):
     df_census = context.stage("data.census.cleaned")
-    df_projection = context.stage("data.census.projection")
+    # df_projection = context.stage("data.census.projection")
+    df_projection = context.stage("data.census.custom_projection")
+
+    print("\n[ipu] successful. Projection data received — {} rows, total weight {:,.0f}".format(
+        len(df_projection), df_projection["weight"].sum()
+    ))
 
     # Prepare indexing
     df_households = df_census[["household_id", "household_size", "weight"]].drop_duplicates("household_id")
