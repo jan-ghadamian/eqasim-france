@@ -2,7 +2,7 @@
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\cache
+working_directory: None
 
 # This section defines which parts of the pipeline should be run
 run:
@@ -24,8 +24,8 @@ config:
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\data
-  output_path: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\output
+  data_path: None
+  output_path: None
   output_prefix: corsica_
 
   # Only interesting if you run the simulation
@@ -34,6 +34,9 @@ config:
   # Activate if you want to run mode choice
   mode_choice: false
 
+  # Activated to includ rail
+  gtfs_date: "20250915"
+
   # Corsica settings
   regions: [94]
   gtfs_path: gtfs_corsica
@@ -41,14 +44,3 @@ config:
   ban_path: ban_corsica
   bdtopo_path: bdtopo_corsica
   matching_minimum_observations: 5
-
-  # eqasim_local_source: C:\Users\ghjan\OneDrive - ETH Zurich\Documents\FUTURES\pipeline-MATSim\eqasim-java
-
-  # projection_year: custom        # any non-None value to activate the IPU path in sampled.py
-  # custom_projection_path: C:/Users/ghjan/OneDrive - ETH Zurich/Documents/FUTURES/Eqasim_project/population/custom_projection_target.csv
-  # custom_road_network_path: C:/Users/ghjan/OneDrive - ETH Zurich/Documents/FUTURES/Eqasim_project/network/custom_road_network.xml.gz
-
-  # Uncomment to generate a scenario for eqasim-java unit testing
-  # write_jar: false
-  # output_path: /path/to/eqasim-java/ile_de_france/src/test/resources/corsica
-  # eqasim_path: /path/to/eqasim-java/ile_de_france/target/ile_de_france-1.1.0.jar
