@@ -21,6 +21,8 @@ def configure(context):
     context.config("eqasim_repository", DEFAULT_EQASIM_REPOSITORY)
     context.config("eqasim_path", "")
     context.config("eqasim_local_source", "")
+    context.config("eqasim_template_dir", "")
+    context.config("maven_offline", False)
 
     # ASC values to bake into IDFModeParameters.java at compile time
     context.config("asc_car",  -2.00)
@@ -37,6 +39,7 @@ def run(context, command, arguments, cwd = None):
 def execute(context):
     version = context.config("eqasim_version")
     local_source = context.config("eqasim_local_source")
+    template_dir = context.config("eqasim_template_dir")
     jar_path_prebuilt = context.config("eqasim_path")
 
     if jar_path_prebuilt != "":
@@ -49,10 +52,13 @@ def execute(context):
     elif local_source != "":
         # Case 2: build from a local source folder, no git involved
         print("Building eqasim-java from local source: %s" % local_source)
-        maven.run(context, [
+        mvn_args = [
             "-Pstandalone", "--projects", "ile_de_france", "--also-make",
             "package", "-DskipTests=true"
-        ], cwd=local_source)
+        ]
+        if context.config("maven_offline"):
+            mvn_args.insert(0, "-o")
+        maven.run(context, mvn_args, cwd=local_source)
 
         built_jar = "%s/ile_de_france/target/ile_de_france-%s.jar" % (local_source, version)
         if not os.path.exists(built_jar):
@@ -64,18 +70,26 @@ def execute(context):
             "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version))
         
     else:
-        # Case 3: clone from git and build
-        print("Cloning and building eqasim-java from git: %s" % context.config("eqasim_repository"))
-        branch = context.config("eqasim_branch")
-        git.run(context, [
-            "clone", "--single-branch", "-b", branch,
-            context.config("eqasim_repository"), "eqasim-java"
-        ])
+        # Case 3: copy pre-cloned template or clone from git, patch ASC, and build
+        if template_dir != "":
+            print("Copying eqasim-java template from: %s" % template_dir)
+            shutil.copytree(
+                template_dir,
+                "%s/eqasim-java" % context.path(),
+                ignore=shutil.ignore_patterns("target", ".git"),
+            )
+        else:
+            print("Cloning and building eqasim-java from git: %s" % context.config("eqasim_repository"))
+            branch = context.config("eqasim_branch")
+            git.run(context, [
+                "clone", "--single-branch", "-b", branch,
+                context.config("eqasim_repository"), "eqasim-java"
+            ])
 
-        commit = context.config("eqasim_commit")
-        git.run(context, [
-            "checkout", commit
-        ], cwd="%s/eqasim-java" % context.path())
+            commit = context.config("eqasim_commit")
+            git.run(context, [
+                "checkout", commit
+            ], cwd="%s/eqasim-java" % context.path())
 
         # ── Patch IDFModeParameters.java with scenario ASC values ──
         idf_path = Path(
@@ -99,10 +113,13 @@ def execute(context):
         ))
         # ────────────────────────────────────────────────────────────
 
-        maven.run(context, [
+        mvn_args = [
             "-Pstandalone", "--projects", "ile_de_france", "--also-make",
             "package", "-DskipTests=true"
-        ], cwd="%s/eqasim-java" % context.path())
+        ]
+        if context.config("maven_offline"):
+            mvn_args.insert(0, "-o")
+        maven.run(context, mvn_args, cwd="%s/eqasim-java" % context.path())
 
         if not os.path.exists("%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version)):
             raise RuntimeError("The JAR was not created correctly. Wrong eqasim_version specified?")
@@ -110,7 +127,6 @@ def execute(context):
     return "eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % version
 
 def validate(context):
-    git.validate(context)
     java.validate(context)
     maven.validate(context)
 
@@ -137,7 +153,15 @@ def validate(context):
                     latest_mtime = max(latest_mtime, mtime)
         return latest_mtime
 
-    # Case 3: git — no extra validation needed
+    # Case 3a: pre-cloned local template directory (no git needed)
+    template_dir = context.config("eqasim_template_dir")
+    if template_dir != "":
+        if not os.path.exists(template_dir):
+            raise RuntimeError("Cannot find eqasim template at: %s" % template_dir)
+        return True
+
+    # Case 3b: git — verify git binary and proceed
+    git.validate(context)
     return True
 
 def _generate_idf_mode_parameters(asc: dict) -> str:

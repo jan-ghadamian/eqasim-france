@@ -11,8 +11,6 @@ def configure(context):
     context.stage("data.spatial.codes")
     context.config("exclude_no_employee", False)
 
-    context.config("output_path")
-
 def execute(context):
     df_sirene_establishments = context.stage("data.sirene.raw_siret")
     df_sirene_headquarters = context.stage("data.sirene.raw_siren")

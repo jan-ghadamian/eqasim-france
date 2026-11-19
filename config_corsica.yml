@@ -33,6 +33,7 @@ config:
 
   # Activate if you want to run mode choice
   mode_choice: false
+  gtfs_date: "20250915" # pt2matsim requires yyyymmdd format; 20250915 includes both buses and CFC railways
 
   # Corsica settings
   regions: [94]
